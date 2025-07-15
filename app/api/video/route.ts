@@ -43,5 +43,25 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-  } catch (error) {}
+
+    const videoData = {
+      ...body,
+      controls: body.controls ?? true,
+      transformation: {
+        height: 1920,
+        width: 1080,
+        quality: body.transformation?.quality || 100,
+      },
+    };
+
+    const newVideo = await Video.create({ videoData });
+
+    return NextResponse.json(newVideo, { status: 201 });
+  } catch (error) {
+    console.error("Error creating video:", error);
+    return NextResponse.json(
+      { error: "Failed to create video" },
+      { status: 500 }
+    );
+  }
 }
